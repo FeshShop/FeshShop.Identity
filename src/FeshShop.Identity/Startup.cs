@@ -8,12 +8,25 @@ namespace FeshShop.Identity
 
     public class Startup
     {
+        private const string CorsPolicy = nameof(CorsPolicy);
+        private static readonly string[] Headers = new[] { "X-Operation", "X-Resource", "X-Total-Count" };
+
         public Startup(IConfiguration configuration) => this.Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CorsPolicy, cors =>
+                        cors.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials()
+                            .WithExposedHeaders(Headers));
+            });
+
             services.AddControllers();
         }
 
@@ -24,6 +37,7 @@ namespace FeshShop.Identity
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(CorsPolicy);
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
