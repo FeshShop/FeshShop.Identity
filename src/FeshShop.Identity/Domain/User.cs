@@ -2,6 +2,8 @@
 {
     using FeshShop.Common.Mongo.Attributes;
     using FeshShop.Common.Types;
+    using Microsoft.AspNetCore.Identity;
+    using MongoDB.Bson.Serialization.Attributes;
     using System;
     using System.Text.RegularExpressions;
 
@@ -13,6 +15,7 @@
             @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+        [BsonId]
         public Guid Id { get; private set; }
 
         public string Email { get; private set; }
@@ -38,6 +41,16 @@
             this.Email = email.ToLowerInvariant();
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetPassword(string password, IPasswordHasher<User> passwordHasher)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new Exception("Password can not be empty.");
+            }
+
+            this.PasswordHash = passwordHasher.HashPassword(this, password);
         }
     }
 }

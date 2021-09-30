@@ -7,6 +7,7 @@ namespace FeshShop.Identity
     using FeshShop.Identity.Domain;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -25,6 +26,7 @@ namespace FeshShop.Identity
         {
             services.AddInitializers(typeof(IMongoDbInitializer));
             services.AddScoped(typeof(IMongoRepository<User>), typeof(MongoRepository<User>));
+            services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddServices(Assembly.GetExecutingAssembly());
             services.AddCors(options =>
             {
@@ -37,7 +39,8 @@ namespace FeshShop.Identity
 
             services.AddMongoDatabase(this.Configuration);
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IStartupInitializer startupInitializer)
