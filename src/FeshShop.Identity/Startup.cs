@@ -4,6 +4,7 @@ namespace FeshShop.Identity
     using FeshShop.Common.Mongo;
     using FeshShop.Common.Mongo.Contracts;
     using FeshShop.Common.Mvc;
+    using FeshShop.Common.Swagger;
     using FeshShop.Identity.Domain;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -24,22 +25,21 @@ namespace FeshShop.Identity
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddInitializers(typeof(IMongoDbInitializer));
-            services.AddScoped(typeof(IMongoRepository<User>), typeof(MongoRepository<User>));
-            services.AddTransient<IPasswordHasher<User>, PasswordHasher<User>>();
-            services.AddServices(Assembly.GetExecutingAssembly());
-            services.AddCors(options =>
-            {
-                options.AddPolicy(CorsPolicy, cors =>
-                        cors.AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader()
-                            .WithExposedHeaders(Headers));
-            });
-
-            services.AddMongoDatabase(this.Configuration);
-
-            services.AddControllers()
+            services.AddInitializers(typeof(IMongoDbInitializer))
+                .AddScoped(typeof(IMongoRepository<User>), typeof(MongoRepository<User>))
+                .AddTransient<IPasswordHasher<User>, PasswordHasher<User>>()
+                .AddServices(Assembly.GetExecutingAssembly())
+                .AddCors(options =>
+                {
+                    options.AddPolicy(CorsPolicy, cors =>
+                            cors.AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyHeader()
+                                .WithExposedHeaders(Headers));
+                })
+                .AddMongoDatabase(this.Configuration)
+                .AddSwagger(this.Configuration)
+                .AddControllers()
                 .AddNewtonsoftJson();
         }
 
@@ -50,11 +50,12 @@ namespace FeshShop.Identity
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(CorsPolicy);
-            app.UseHttpsRedirection();
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints => endpoints.MapControllers());
+            app.UseCors(CorsPolicy)            
+                .UseHttpsRedirection()
+                .UseRouting()
+                .UseAuthorization()
+                .UseSwagger()
+                .UseEndpoints(endpoints => endpoints.MapControllers());
 
             startupInitializer.InitializeAsync();
         }

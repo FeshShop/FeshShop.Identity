@@ -4,7 +4,6 @@
     using FeshShop.Identity.Messages.Commands;
     using FeshShop.Identity.Services.Contracts;
     using Microsoft.AspNetCore.Mvc;
-    using System;
     using System.Threading.Tasks;
 
     public class IdentityController : ApiController
