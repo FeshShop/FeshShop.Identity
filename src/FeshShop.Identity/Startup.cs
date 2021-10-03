@@ -1,6 +1,7 @@
 namespace FeshShop.Identity
 {
     using FeshShop.Common;
+    using FeshShop.Common.Authentication;
     using FeshShop.Common.Mongo;
     using FeshShop.Common.Mongo.Contracts;
     using FeshShop.Common.Mvc;
@@ -30,6 +31,7 @@ namespace FeshShop.Identity
                 .AddMongoRepositories()
                 .AddTransient<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddServices(Assembly.GetExecutingAssembly())
+                .AddJwt(this.Configuration)
                 .AddCors(options =>
                 {
                     options.AddPolicy(CorsPolicy, cors =>
