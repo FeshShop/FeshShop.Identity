@@ -17,7 +17,7 @@
         public async Task<IActionResult> SignUp([FromBody]SignUpInputModel model)
         {
             model.BindId(x => x.Id);
-            await identityService.SignUpAsync(model.Id, model.Email, model.Password);
+            await identityService.SignUpAsync(model.Id, model.Email, model.Password, model.Role);
 
             return this.NoContent();
         }

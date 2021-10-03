@@ -5,6 +5,6 @@
 
     public interface IIdentityService
     {
-        Task SignUpAsync(Guid id, string email, string password);
+        Task SignUpAsync(Guid id, string email, string password, string role);
     }
 }

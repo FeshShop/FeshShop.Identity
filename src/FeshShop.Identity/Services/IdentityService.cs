@@ -18,7 +18,7 @@
             this.passwordHasher = passwordHasher;
         }
 
-        public async Task SignUpAsync(Guid id, string email, string password) 
+        public async Task SignUpAsync(Guid id, string email, string password, string role = Role.User) 
         {
             var user = await userRepository.GetAsync(email);
 
@@ -27,7 +27,12 @@
                 throw new Exception($"Email: '{email}' is already in use.");
             }
 
-            user = new User(id, email);
+            if (string.IsNullOrWhiteSpace(role))
+            {
+                role = Role.User;
+            }
+
+            user = new User(id, email, role);
             user.SetPassword(password, passwordHasher);
             await userRepository.AddAsync(user);
         }
