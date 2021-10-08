@@ -1,6 +1,7 @@
 namespace FeshShop.Identity
 {
     using FeshShop.Common;
+    using FeshShop.Common.Authentication;
     using FeshShop.Common.Mongo;
     using FeshShop.Common.Mongo.Contracts;
     using FeshShop.Common.Mvc;
@@ -26,9 +27,11 @@ namespace FeshShop.Identity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddInitializers(typeof(IMongoDbInitializer))
-                .AddScoped(typeof(IMongoRepository<User>), typeof(MongoRepository<User>))
+                .AddMongoDatabase(this.Configuration)
+                .AddMongoRepositories()
                 .AddTransient<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddServices(Assembly.GetExecutingAssembly())
+                .AddJwt(this.Configuration)
                 .AddCors(options =>
                 {
                     options.AddPolicy(CorsPolicy, cors =>
@@ -36,8 +39,7 @@ namespace FeshShop.Identity
                                 .AllowAnyMethod()
                                 .AllowAnyHeader()
                                 .WithExposedHeaders(Headers));
-                })
-                .AddMongoDatabase(this.Configuration)
+                })                
                 .AddSwagger(this.Configuration)
                 .AddControllers()
                 .AddNewtonsoftJson();
