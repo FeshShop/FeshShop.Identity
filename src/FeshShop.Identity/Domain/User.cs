@@ -22,6 +22,8 @@
 
         public string PasswordHash { get; private set; }
 
+        public string Role { get; private set; }
+
         public DateTime CreatedAt { get; private set; }
 
         public DateTime UpdatedAt { get; private set; }
@@ -30,15 +32,21 @@
         {
         }
 
-        public User(Guid id, string email)
+        public User(Guid id, string email, string role)
         {
             if (!EmailRegex.IsMatch(email))
             {
                 throw new Exception($"Invalid email: '{email}'.");
             }
-            
+
+            if (!Domain.Role.IsValid(role))
+            {
+                throw new Exception($"Invalid role: '{role}'.");
+            }
+
             this.Id = id;
             this.Email = email.ToLowerInvariant();
+            this.Role = role.ToLowerInvariant();
             this.CreatedAt = DateTime.UtcNow;
             this.UpdatedAt = DateTime.UtcNow;
         }
@@ -52,5 +60,8 @@
 
             this.PasswordHash = passwordHasher.HashPassword(this, password);
         }
+
+        public bool ValidatePassword(string password, IPasswordHasher<User> passwordHasher)
+            => passwordHasher.VerifyHashedPassword(this, this.PasswordHash, password) != PasswordVerificationResult.Failed;
     }
 }
