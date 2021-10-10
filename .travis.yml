@@ -10,6 +10,8 @@ install:
   - travis_wait ./scripts/dotnet-restore.sh
 before_script:
   - chmod +x ./scripts/dotnet-build.sh 
+after_success:
+  echo "Test"
 script:
   - ./scripts/dotnet-build.sh
 branches:
