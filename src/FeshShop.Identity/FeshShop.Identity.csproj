@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -8,13 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FeshShop.Common" Version="0.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.19" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\FeshShop.Common\src\FeshShop.Common\FeshShop.Common.csproj" />
-  </ItemGroup>
-
 
 </Project>

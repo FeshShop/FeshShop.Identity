@@ -5,13 +5,16 @@ sudo: required
 dotnet: 5.0
 solution: FeshShop.Identity.sln
 before_install:
-  - chmod +x ./scripts/dotnet-restore.sh 
+  - chmod +x ./scripts/dotnet-restore.sh
 install:
   - travis_wait ./scripts/dotnet-restore.sh
 before_script:
   - chmod +x ./scripts/dotnet-build.sh 
+  - chmod +x ./scripts/deploy-to-docker.sh
 script:
   - ./scripts/dotnet-build.sh
+after_success:
+  - ./scripts/deploy-to-docker.sh
 branches:
   only:
   - main
