@@ -18,7 +18,6 @@ after_success:
     docker build .
     docker push "$DOCKER_USERNAME"/feshshop.identity:latest
   fi
-
 branches:
   only:
   - main
