@@ -7,8 +7,13 @@
     <DockerfileContext>..\..\..</DockerfileContext>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	  <ProjectReference Include="..\..\..\FeshShop.Common\src\FeshShop.Common\FeshShop.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+	  <PackageReference Include="FeshShop.Common" Version="0.0.2" />
+  </ItemGroup> 
   <ItemGroup>
-    <PackageReference Include="FeshShop.Common" Version="0.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.19" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
   </ItemGroup>
