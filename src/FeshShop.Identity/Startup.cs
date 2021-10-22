@@ -33,6 +33,7 @@ namespace FeshShop.Identity
                 .AddTransient<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddServices(Assembly.GetExecutingAssembly())
                 .AddJwt(this.Configuration)
+                .AddHealthChecker(this.Configuration)
                 .AddCors(options =>
                 {
                     options.AddPolicy(CorsPolicy, cors =>
