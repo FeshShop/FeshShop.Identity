@@ -1,5 +1,6 @@
 ﻿namespace FeshShop.Identity.Controllers
 {
+    using FeshShop.Common.Mediator.Contracts;
     using FeshShop.Common.Mvc;
     using FeshShop.Identity.Messages.Commands;
     using FeshShop.Identity.Services.Contracts;
@@ -10,7 +11,9 @@
     {
         private readonly IIdentityService identityService;
 
-        public IdentityController(IIdentityService identityService) => this.identityService = identityService;
+        public IdentityController(IMediator mediator, IIdentityService identityService) 
+            :base(mediator)
+            => this.identityService = identityService;
 
         [HttpPost]
         [Route(nameof(SignUp))]
