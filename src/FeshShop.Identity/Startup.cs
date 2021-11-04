@@ -3,6 +3,7 @@ namespace FeshShop.Identity
     using FeshShop.Common;
     using FeshShop.Common.Authentication;
     using FeshShop.Common.HealthChecks;
+    using FeshShop.Common.Mediator;
     using FeshShop.Common.Mongo;
     using FeshShop.Common.Mongo.Contracts;
     using FeshShop.Common.Mvc;
@@ -32,6 +33,7 @@ namespace FeshShop.Identity
                 .AddMongoRepositories()
                 .AddTransient<IPasswordHasher<User>, PasswordHasher<User>>()
                 .AddServices(Assembly.GetExecutingAssembly())
+                .AddMediator()
                 .AddJwt(this.Configuration)
                 .AddHealthChecker(this.Configuration)
                 .AddCors(options =>
