@@ -52,9 +52,7 @@ namespace FeshShop.Identity
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IStartupInitializer startupInitializer)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseCors(CorsPolicy)            
                 .UseHttpsRedirection()

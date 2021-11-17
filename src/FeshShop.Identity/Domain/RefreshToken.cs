@@ -8,18 +8,6 @@
     [BsonCollection("refresh-tokens")]
     public class RefreshToken : IIdentifiable
     {
-        public Guid Id { get; private set; }
-
-        public Guid UserId { get; private set; }
-
-        public string Token { get; private set; }
-
-        public DateTime CreatedAt { get; private set; }
-
-        public DateTime? RevokedAt { get; private set; }
-
-        public bool Revoked => this.RevokedAt.HasValue;
-
         protected RefreshToken()
         {
         }
@@ -31,6 +19,18 @@
             this.CreatedAt = DateTime.UtcNow;
             this.Token = CreateToken(user, passwordHasher);
         }
+
+        public Guid Id { get; private set; }
+
+        public Guid UserId { get; private set; }
+
+        public string Token { get; private set; }
+
+        public DateTime CreatedAt { get; private set; }
+
+        public DateTime? RevokedAt { get; private set; }
+
+        public bool Revoked => this.RevokedAt.HasValue;
 
         private static string CreateToken(User user, IPasswordHasher<User> passwordHasher)
             => passwordHasher.HashPassword(user, Guid.NewGuid().ToString("N"))

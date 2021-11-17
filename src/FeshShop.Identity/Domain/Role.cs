@@ -8,9 +8,7 @@
         public static bool IsValid(string role)
         {
             if (string.IsNullOrWhiteSpace(role))
-            {
                 return false;
-            }
 
             role = role.ToLowerInvariant();
 

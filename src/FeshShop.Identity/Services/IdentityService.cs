@@ -35,14 +35,10 @@
             var user = await this.userRepository.GetAsync(email);
 
             if (user != null)
-            {
                 throw new Exception($"Email: '{email}' is already in use.");
-            }
 
             if (string.IsNullOrWhiteSpace(role))
-            {
                 role = Role.User;
-            }
 
             user = new User(id, email, role);
             user.SetPassword(password, passwordHasher);
@@ -52,10 +48,9 @@
         public async Task<JsonWebToken> SignInAsync(string email, string password)
         {
             var user = await this.userRepository.GetAsync(email);
+
             if (user == null || !user.ValidatePassword(password, this.passwordHasher))
-            {
                 throw new Exception("Invalid credentials.");
-            }
 
             var claims = await this.claimsProvider.GetAsync(user.Id);
             var jwt = jwtHandler.CreateToken(user.Id.ToString("N"), user.Role, claims);
