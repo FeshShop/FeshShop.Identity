@@ -3,7 +3,7 @@ mono: none
 os: linux
 dist: xenial
 sudo: required
-dotnet: 5.0
+dotnet: 9.0
 solution: FeshShop.Identity.sln
 before_install:
   - chmod +x ./scripts/dotnet-restore.sh
