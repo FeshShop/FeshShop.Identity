@@ -1,65 +1,50 @@
-﻿namespace FeshShop.Identity.Services
+﻿namespace FeshShop.Identity.Services;
+
+using Repositories.Contracts;
+using Common.Authentication;
+using Domain;
+using Contracts;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Threading.Tasks;
+
+public class IdentityService(
+    IUserRepository userRepository,
+    IPasswordHasher<User> passwordHasher,
+    IRefreshTokenRepository refreshTokenRepository,
+    IClaimsProvider claimsProvider,
+    IJwtHandler jwtHandler)
+    : IIdentityService
 {
-    using FeshShop.Common.Authentication;
-    using FeshShop.Identity.Domain;
-    using FeshShop.Identity.Repositories;
-    using FeshShop.Identity.Services.Contracts;
-    using Microsoft.AspNetCore.Identity;
-    using System;
-    using System.Threading.Tasks;
-
-    public class IdentityService : IIdentityService
+    public async Task SignUpAsync(Guid id, string email, string password, string role = Role.User)
     {
-        private readonly IUserRepository userRepository;
-        private readonly IPasswordHasher<User> passwordHasher;
-        private readonly IRefreshTokenRepository refreshTokenRepository;
-        private readonly IClaimsProvider claimsProvider;
-        private readonly IJwtHandler jwtHandler;
+        var user = await userRepository.GetAsync(email);
 
-        public IdentityService(
-            IUserRepository userRepository,
-            IPasswordHasher<User> passwordHasher,
-            IRefreshTokenRepository refreshTokenRepository,
-            IClaimsProvider claimsProvider,
-            IJwtHandler jwtHandler)
-        {
-            this.userRepository = userRepository;
-            this.passwordHasher = passwordHasher;
-            this.refreshTokenRepository = refreshTokenRepository;
-            this.claimsProvider = claimsProvider;
-            this.jwtHandler = jwtHandler;
-        }
+        if (user != null)
+            throw new Exception($"Email: '{email}' is already in use.");
 
-        public async Task SignUpAsync(Guid id, string email, string password, string role = Role.User) 
-        {
-            var user = await this.userRepository.GetAsync(email);
+        if (string.IsNullOrWhiteSpace(role))
+            role = Role.User;
 
-            if (user != null)
-                throw new Exception($"Email: '{email}' is already in use.");
+        user = new User(id, email, role);
+        user.SetPassword(password, passwordHasher);
+        await userRepository.AddAsync(user);
+    }
 
-            if (string.IsNullOrWhiteSpace(role))
-                role = Role.User;
+    public async Task<JsonWebToken> SignInAsync(string email, string password)
+    {
+        var user = await userRepository.GetAsync(email);
 
-            user = new User(id, email, role);
-            user.SetPassword(password, passwordHasher);
-            await userRepository.AddAsync(user);
-        }
+        if (user == null || !user.ValidatePassword(password, passwordHasher))
+            throw new Exception("Invalid credentials.");
 
-        public async Task<JsonWebToken> SignInAsync(string email, string password)
-        {
-            var user = await this.userRepository.GetAsync(email);
+        var claims = await claimsProvider.GetAsync(user.Id);
+        var jwt = jwtHandler.CreateToken(user.Id.ToString("N"), user.Role, claims);
+        var refreshToken = new RefreshToken(user, passwordHasher);
+        jwt.RefreshToken = refreshToken.Token;
 
-            if (user == null || !user.ValidatePassword(password, this.passwordHasher))
-                throw new Exception("Invalid credentials.");
+        await refreshTokenRepository.AddAsync(refreshToken);
 
-            var claims = await this.claimsProvider.GetAsync(user.Id);
-            var jwt = jwtHandler.CreateToken(user.Id.ToString("N"), user.Role, claims);
-            var refreshToken = new RefreshToken(user, this.passwordHasher);
-            jwt.RefreshToken = refreshToken.Token;
-                        
-            await refreshTokenRepository.AddAsync(refreshToken);
-
-            return jwt;
-        }
+        return jwt;
     }
 }

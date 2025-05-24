@@ -1,16 +1,12 @@
-﻿namespace FeshShop.Identity.Repositories
+﻿namespace FeshShop.Identity.Repositories;
+
+using Contracts;
+using FeshShop.Common.Mongo.Contracts;
+using Domain;
+using System.Threading.Tasks;
+
+public class RefreshTokenRepository(IMongoRepository<RefreshToken> mongoRepository) : IRefreshTokenRepository
 {
-    using FeshShop.Common.Mongo.Contracts;
-    using FeshShop.Identity.Domain;
-    using System.Threading.Tasks;
-
-    public class RefreshTokenRepository : IRefreshTokenRepository
-    {
-        private readonly IMongoRepository<RefreshToken> mongoRepository;
-
-        public RefreshTokenRepository(IMongoRepository<RefreshToken> mongoRepository) => this.mongoRepository = mongoRepository;
-
-        public async Task AddAsync(RefreshToken token)
-            => await mongoRepository.AddAsync(token);        
-    }
+    public async Task AddAsync(RefreshToken token)
+        => await mongoRepository.AddAsync(token);
 }
